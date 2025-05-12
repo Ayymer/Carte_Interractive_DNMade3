@@ -6,16 +6,55 @@ let userLat = 47.216671;
 let userLng = -1.55;
 
 // UI elements
-let userSize = 40;
+let userSize = 80;
 let isNearMacadam = false;
 let user, map, canvas;
 let speakerLoudIcon, speakerQuietIcon;
 let isSoundPlaying = false;
 
+// Proximity settings
+const proximityThreshold = 500; // Distance in meters to trigger sound
+
+// Venue coordinates
 // Macadam marker coordinates
 const macadamLat = 47.19750561442489;
 const macadamLng = -1.5891794806023196;
-const proximityThreshold = 1000; // Distance in meters to trigger sound
+
+// Warehouse marker coordinates
+const warehouseLat = 47.201316327544696;
+const warehouseLng = -1.5728756262744052;
+
+// Le Floride marker coordinates
+const leflorideLat = 47.20063223509995;
+const leflorideLng = -1.57196726065538;
+
+// Colors Club marker coordinates
+const colorsclubLat = 47.21581175781134;
+const colorsclubLng = -1.5519070741454308;
+
+// Stereolux marker coordinates
+const stereoluxLat = 47.20546919327099;
+const stereoluxLng = -1.5633197992729915;
+
+// Elephant Club marker coordinates
+const elephantclubLat = 47.21254507753584;
+const elephantclubLng = -1.5591211820722817;
+
+// Bootlegger marker coordinates
+const bootleggerLat = 47.21281821333305;
+const bootleggerLng = -1.5555831183274738;
+
+// 19:33 Cocktail Experience marker coordinates
+const cocktailexpLat = 47.21270265902998;
+const cocktailexpLng = -1.5639114894911312;
+
+// Le Lieu Unique marker coordinates
+const lieuuniqueLat = 47.21569150800053;
+const lieuuniqueLng = -1.5454752894909598;
+
+// Zénith Nantes Métropole marker coordinates
+const zenithLat = 47.22880839909674;
+const zenithLng = -1.6274719630164791;
 
 // Sound settings
 const maxVolume = 0.6; // Maximum volume level
@@ -32,7 +71,7 @@ function preload() {
     sound2.amp(0.3);
 
     // Load user icon
-    user = loadImage('assets/user.png');
+    user = loadImage('assets/user2.png');
     
     // Load speaker icons
     speakerLoudIcon = loadImage('assets/speaker-loud.svg');
@@ -49,12 +88,95 @@ function setup() {
     // Initialize map
     map = L.map('mapid').setView([userLat, userLng], 15);
     
+    // Create venue icons
     // Create Macadam icon
     const macadamIcon = L.icon({
         iconUrl: 'assets/macadam.png',
-        iconSize: [45, 45],
-        iconAnchor: [22, 94],
-        popupAnchor: [-3, -76]
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create warehouse icon
+    const warehouseIcon = L.icon({
+        iconUrl: 'assets/warehouse.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create Le Floride icon
+    const leflorideIcon = L.icon({
+        iconUrl: 'assets/lefloride.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create Colors Club icon
+    const colorsclubIcon = L.icon({
+        iconUrl: 'assets/user.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create Stereolux icon
+    const stereoluxIcon = L.icon({
+        iconUrl: 'assets/stereolux.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create Elephant Club icon
+    const elephantclubIcon = L.icon({
+        iconUrl: 'assets/elephantclub.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create Bootlegger icon
+    const bootleggerIcon = L.icon({
+        iconUrl: 'assets/bootlegger.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create 19:33 Cocktail Experience icon
+    const cocktailexpIcon = L.icon({
+        iconUrl: 'assets/cocktailexp.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create Le Lieu Unique icon
+    const lieuuniqueIcon = L.icon({
+        iconUrl: 'assets/lieuunique.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
+    });
+
+    // Create Zénith icon
+    const zenithIcon = L.icon({
+        iconUrl: 'assets/zenith.png',
+        iconSize: [60, 60],
+        iconAnchor: [30, 30],
+        popupAnchor: [0, -15],
+        className: 'rounded-icon',
     });
 
     // Add map tile layer
@@ -63,16 +185,44 @@ function setup() {
     }).addTo(map);
 
     // Add markers
-    L.marker([userLat, userLng]).addTo(map)
-        .bindPopup('Nantes.<br> Carte.')
+    L.marker([warehouseLat, warehouseLng], {icon: warehouseIcon}).addTo(map)
+        .bindPopup('Warehouse.<br> Carte.')
         .openPopup();
 
-    L.marker([47.201316327544696, -1.5728756262744052]).addTo(map)
-        .bindPopup('Ware.<br> Carte.')
+    L.marker([colorsclubLat, colorsclubLng], {icon: colorsclubIcon}).addTo(map)
+        .bindPopup('Colors Club.<br> Carte.')
         .openPopup();
 
     L.marker([macadamLat, macadamLng], {icon: macadamIcon}).addTo(map)
-        .bindPopup('Macadam.')
+        .bindPopup('<h2>Macadam</h2> 📍 21 Quai des Antilles. <br> Le temple de l\'électro à Nantes. Classé parmi les meilleurs clubs du monde, il accueille des DJ internationaux dans une ambiance industrielle et immersive.')
+        .openPopup();
+
+    L.marker([leflorideLat, leflorideLng], {icon: leflorideIcon}).addTo(map)
+        .bindPopup('<h2>Le Floride</h2> 📍 21 Quai des Antilles. <br> Le temple de l\'électro à Nantes. Classé parmi les meilleurs clubs du monde, il accueille des DJ internationaux dans une ambiance industrielle et immersive.')
+        .openPopup();
+
+    L.marker([stereoluxLat, stereoluxLng], {icon: stereoluxIcon}).addTo(map)
+        .bindPopup('<h2>Stereolux</h2> 📍 4 Boulevard Léon Bureau <br> Lieu dédié aux musiques actuelles et aux arts numériques. Programmation variée allant du rock à l\'électro, dans une ambiance créative et innovante.')
+        .openPopup();
+
+    L.marker([elephantclubLat, elephantclubLng], {icon: elephantclubIcon}).addTo(map)
+        .bindPopup('<h2>Elephant Club</h2> 📍 10 Place de la Bourse <br> Ambiance mature et élégante pour les amateurs de musique généraliste. Idéal pour une soirée dansante entre amis dans un cadre soigné.')
+        .openPopup();
+
+    L.marker([bootleggerLat, bootleggerLng], {icon: bootleggerIcon}).addTo(map)
+        .bindPopup('<h2>Bootlegger</h2> 📍 13 Rue Kervégan <br> Bar à cocktails inspiré de l\'époque de la prohibition. Ambiance feutrée et tamisée, parfaite pour savourer des créations originales.')
+        .openPopup();
+
+    L.marker([cocktailexpLat, cocktailexpLng], {icon: cocktailexpIcon}).addTo(map)
+        .bindPopup('<h2>19:33 Cocktail Experience</h2> 📍 6 Rue Santeuil <br> Voyage dans le temps avec une déco style Orient Express. Cocktails du monde entier servis dans une atmosphère élégante et raffinée.')
+        .openPopup();
+
+    L.marker([lieuuniqueLat, lieuuniqueLng], {icon: lieuuniqueIcon}).addTo(map)
+        .bindPopup('<h2>Le Lieu Unique</h2> 📍 2 Rue de la Biscuiterie <br> Ancienne usine LU transformée en centre culturel. Bar-restaurant avec une programmation artistique éclectique et une ambiance arty.')
+        .openPopup();
+
+    L.marker([zenithLat, zenithLng], {icon: zenithIcon}).addTo(map)
+        .bindPopup('<h2>Zénith Nantes Métropole</h2> 📍 Boulevard du Zénith, Saint-Herblain <br> Grande salle accueillant des concerts de tous genres : pop, rock, hip-hop, variétés. Ambiance spectaculaire pour des événements d\'envergure.')
         .openPopup();
     
     // Make canvas transparent
@@ -82,7 +232,7 @@ function setup() {
     map.on('move', updateUserPosition);
     map.on('zoom', updateUserPosition);
 
-    sound2.setLoop(true)
+    sound2.setLoop(true);
 }
 
 function draw() {
