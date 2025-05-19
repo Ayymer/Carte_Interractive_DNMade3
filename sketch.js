@@ -13,7 +13,7 @@ let speakerLoudIcon, speakerQuietIcon;
 let isSoundPlaying = false;
 
 // Proximity settings
-const proximityThreshold = 500; // Distance in meters to trigger sound
+const proximityThreshold = 500; // Distance in  meters to trigger sound
 
 // Venue coordinates
 // Macadam marker coordinates
@@ -88,7 +88,6 @@ function setup() {
     // Initialize map
     map = L.map('mapid').setView([userLat, userLng], 15);
     
-    // Create venue icons
     // Create Macadam icon
     const macadamIcon = L.icon({
         iconUrl: 'assets/macadam.png',
