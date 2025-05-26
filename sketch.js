@@ -227,13 +227,13 @@ function setup() {
         icon: warehouseIcon,
         riseOnHover: true
     }).addTo(map)
-        .bindPopup('Warehouse.<br> Carte.');
+        .bindPopup('<h2>Warehouse</h2> 📍 21 Quai des Antilles, 44200 Nantes <br> 🎶 Musique : Techno, house, électro – DJs internationaux <br> 🕺 Ambiance industrielle, gros son, lumière travaillée, public fêtard');
 
     L.marker([colorsclubLat, colorsclubLng], {
         icon: colorsclubIcon,
         riseOnHover: true
     }).addTo(map)
-        .bindPopup('Colors Club.<br> Carte.');
+        .bindPopup('<h2>Colors Club</h2> 📍 3 Rue de l\'Emery, 44000 Nantes <br> 🎶 Musique : Généraliste – hits, latino, dancehall <br> 🕺 Ambiance flashy, festive, jeune, cocktails et boules à facettes');
 
     L.marker([macadamLat, macadamLng], {
         icon: macadamIcon,
