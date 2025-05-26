@@ -102,10 +102,19 @@ function preload() {
     });
 
     // Load user icon
-    user = loadImage('assets/icons/user2.png');
+    user = loadImage('assets/Icons/user2.png');
     
     // Load speaker icon
-    speakerLoudIcon = loadImage('assets/icons/speaker-loud.svg');
+    speakerLoudIcon = loadImage('assets/Icons/speaker-loud.svg',
+        // Success callback
+        () => {
+            console.log('Speaker icon loaded successfully');
+        },
+        // Error callback
+        (err) => {
+            console.error('Error loading speaker icon:', err);
+        }
+    );
 }
 
 function setup() { 
