@@ -1,5 +1,5 @@
 // Sound variables
-let sound2;
+let sounds = {};
 
 // Geographic coordinates for the user
 let userLat = 47.216671;
@@ -7,13 +7,12 @@ let userLng = -1.55;
 
 // UI elements
 let userSize = 80;
-let isNearMacadam = false;
 let user, map, canvas;
-let speakerLoudIcon, speakerQuietIcon;
+let speakerLoudIcon;
 let isSoundPlaying = false;
 
 // Proximity settings
-const proximityThreshold = 500; // Distance in  meters to trigger sound
+const proximityThreshold = 500; // Distance in meters to trigger sound
 
 // Venue coordinates
 // Macadam marker coordinates
@@ -56,6 +55,20 @@ const lieuuniqueLng = -1.5454752894909598;
 const zenithLat = 47.22880839909674;
 const zenithLng = -1.6274719630164791;
 
+// Define venues array with all locations
+const venues = [
+    { name: "Macadam", lat: macadamLat, lng: macadamLng, isNear: false, soundFile: 'MACADAM.wav' },
+    { name: "Warehouse", lat: warehouseLat, lng: warehouseLng, isNear: false, soundFile: 'WARHOUSE.mp3' },
+    { name: "Le Floride", lat: leflorideLat, lng: leflorideLng, isNear: false, soundFile: 'FLORIDE.mp3' },
+    { name: "Colors Club", lat: colorsclubLat, lng: colorsclubLng, isNear: false, soundFile: 'COLORS.mp3' },
+    { name: "Stereolux", lat: stereoluxLat, lng: stereoluxLng, isNear: false, soundFile: 'STEREOLUX.mp3' },
+    { name: "Elephant Club", lat: elephantclubLat, lng: elephantclubLng, isNear: false, soundFile: 'ELEPHANT CLUB.mp3' },
+    { name: "Bootlegger", lat: bootleggerLat, lng: bootleggerLng, isNear: false, soundFile: 'BOOTLEGGER.mp3' },
+    { name: "19:33 Cocktail Experience", lat: cocktailexpLat, lng: cocktailexpLng, isNear: false, soundFile: 'COKTAIL.mp3' },
+    { name: "Le Lieu Unique", lat: lieuuniqueLat, lng: lieuuniqueLng, isNear: false, soundFile: 'museum.mp3' },
+    { name: "Zénith Nantes Métropole", lat: zenithLat, lng: zenithLng, isNear: false, soundFile: 'ZENITH.mp3' }
+];
+
 // Sound settings
 const maxVolume = 0.6; // Maximum volume level
 const minVolume = 0.05; // Minimum volume when at threshold distance
@@ -65,17 +78,34 @@ const volumeFalloffStart = 100; // Distance in meters where volume starts decrea
 const speakerIconSize = 40;
 const speakerIconMargin = 20;
 
+// Add frame rate control
+let lastFrameTime = 0;
+const targetFrameRate = 30; // Limit to 30 FPS for better performance
+const frameInterval = 1000 / targetFrameRate;
+
 function preload() {
-    // Load sound
-    sound2 = loadSound('assets/Work It by Sköne.wav');
-    sound2.amp(0.3);
+    // Load all sounds
+    venues.forEach(venue => {
+        sounds[venue.name] = loadSound(`assets/marker-sounds/${venue.soundFile}`, 
+            // Success callback
+            () => {
+                console.log(`Sound loaded successfully for ${venue.name}`);
+                venue.sound = sounds[venue.name];
+                venue.sound.amp(0.3);
+                venue.sound.setLoop(true);
+            },
+            // Error callback
+            (err) => {
+                console.error(`Error loading sound for ${venue.name}:`, err);
+            }
+        );
+    });
 
     // Load user icon
-    user = loadImage('assets/user2.png');
+    user = loadImage('assets/icons/user2.png');
     
-    // Load speaker icons
-    speakerLoudIcon = loadImage('assets/speaker-loud.svg');
-    speakerQuietIcon = loadImage('assets/speaker-quiet.svg');
+    // Load speaker icon
+    speakerLoudIcon = loadImage('assets/icons/speaker-loud.svg');
 }
 
 function setup() { 
@@ -90,7 +120,7 @@ function setup() {
     
     // Create Macadam icon
     const macadamIcon = L.icon({
-        iconUrl: 'assets/macadam.png',
+        iconUrl: 'assets/marker-icons/macadam.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -99,7 +129,7 @@ function setup() {
 
     // Create warehouse icon
     const warehouseIcon = L.icon({
-        iconUrl: 'assets/warehouse.png',
+        iconUrl: 'assets/marker-icons/warehouse.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -108,7 +138,7 @@ function setup() {
 
     // Create Le Floride icon
     const leflorideIcon = L.icon({
-        iconUrl: 'assets/lefloride.png',
+        iconUrl: 'assets/marker-icons/le_floride.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -117,7 +147,7 @@ function setup() {
 
     // Create Colors Club icon
     const colorsclubIcon = L.icon({
-        iconUrl: 'assets/user.png',
+        iconUrl: 'assets/marker-icons/color_club.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -126,7 +156,7 @@ function setup() {
 
     // Create Stereolux icon
     const stereoluxIcon = L.icon({
-        iconUrl: 'assets/stereolux.png',
+        iconUrl: 'assets/marker-icons/stereolux.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -135,7 +165,7 @@ function setup() {
 
     // Create Elephant Club icon
     const elephantclubIcon = L.icon({
-        iconUrl: 'assets/elephantclub.png',
+        iconUrl: 'assets/marker-icons/elephant_club.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -144,7 +174,7 @@ function setup() {
 
     // Create Bootlegger icon
     const bootleggerIcon = L.icon({
-        iconUrl: 'assets/bootlegger.png',
+        iconUrl: 'assets/marker-icons/bootlegger.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -153,7 +183,7 @@ function setup() {
 
     // Create 19:33 Cocktail Experience icon
     const cocktailexpIcon = L.icon({
-        iconUrl: 'assets/cocktailexp.png',
+        iconUrl: 'assets/marker-icons/cocktail_xp.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -162,7 +192,7 @@ function setup() {
 
     // Create Le Lieu Unique icon
     const lieuuniqueIcon = L.icon({
-        iconUrl: 'assets/lieuunique.png',
+        iconUrl: 'assets/marker-icons/stereolux.png', // Using stereolux as placeholder
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -171,7 +201,7 @@ function setup() {
 
     // Create Zénith icon
     const zenithIcon = L.icon({
-        iconUrl: 'assets/zenith.png',
+        iconUrl: 'assets/marker-icons/zenith.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -184,67 +214,94 @@ function setup() {
     }).addTo(map);
 
     // Add markers
-    L.marker([warehouseLat, warehouseLng], {icon: warehouseIcon}).addTo(map)
-        .bindPopup('Warehouse.<br> Carte.')
-        .openPopup();
+    L.marker([warehouseLat, warehouseLng], {
+        icon: warehouseIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('Warehouse.<br> Carte.');
 
-    L.marker([colorsclubLat, colorsclubLng], {icon: colorsclubIcon}).addTo(map)
-        .bindPopup('Colors Club.<br> Carte.')
-        .openPopup();
+    L.marker([colorsclubLat, colorsclubLng], {
+        icon: colorsclubIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('Colors Club.<br> Carte.');
 
-    L.marker([macadamLat, macadamLng], {icon: macadamIcon}).addTo(map)
-        .bindPopup('<h2>Macadam</h2> 📍 21 Quai des Antilles. <br> Le temple de l\'électro à Nantes. Classé parmi les meilleurs clubs du monde, il accueille des DJ internationaux dans une ambiance industrielle et immersive.')
-        .openPopup();
+    L.marker([macadamLat, macadamLng], {
+        icon: macadamIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>Macadam</h2> 📍 21 Quai des Antilles. <br> Le temple de l\'électro à Nantes. Classé parmi les meilleurs clubs du monde, il accueille des DJ internationaux dans une ambiance industrielle et immersive.');
 
-    L.marker([leflorideLat, leflorideLng], {icon: leflorideIcon}).addTo(map)
-        .bindPopup('<h2>Le Floride</h2> 📍 21 Quai des Antilles. <br> Le temple de l\'électro à Nantes. Classé parmi les meilleurs clubs du monde, il accueille des DJ internationaux dans une ambiance industrielle et immersive.')
-        .openPopup();
+    L.marker([leflorideLat, leflorideLng], {
+        icon: leflorideIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>Le Floride</h2> 📍 21 Quai des Antilles. <br> Le temple de l\'électro à Nantes. Classé parmi les meilleurs clubs du monde, il accueille des DJ internationaux dans une ambiance industrielle et immersive.');
 
-    L.marker([stereoluxLat, stereoluxLng], {icon: stereoluxIcon}).addTo(map)
-        .bindPopup('<h2>Stereolux</h2> 📍 4 Boulevard Léon Bureau <br> Lieu dédié aux musiques actuelles et aux arts numériques. Programmation variée allant du rock à l\'électro, dans une ambiance créative et innovante.')
-        .openPopup();
+    L.marker([stereoluxLat, stereoluxLng], {
+        icon: stereoluxIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>Stereolux</h2> 📍 4 Boulevard Léon Bureau <br> Lieu dédié aux musiques actuelles et aux arts numériques. Programmation variée allant du rock à l\'électro, dans une ambiance créative et innovante.');
 
-    L.marker([elephantclubLat, elephantclubLng], {icon: elephantclubIcon}).addTo(map)
-        .bindPopup('<h2>Elephant Club</h2> 📍 10 Place de la Bourse <br> Ambiance mature et élégante pour les amateurs de musique généraliste. Idéal pour une soirée dansante entre amis dans un cadre soigné.')
-        .openPopup();
+    L.marker([elephantclubLat, elephantclubLng], {
+        icon: elephantclubIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>Elephant Club</h2> 📍 10 Place de la Bourse <br> Ambiance mature et élégante pour les amateurs de musique généraliste. Idéal pour une soirée dansante entre amis dans un cadre soigné.');
 
-    L.marker([bootleggerLat, bootleggerLng], {icon: bootleggerIcon}).addTo(map)
-        .bindPopup('<h2>Bootlegger</h2> 📍 13 Rue Kervégan <br> Bar à cocktails inspiré de l\'époque de la prohibition. Ambiance feutrée et tamisée, parfaite pour savourer des créations originales.')
-        .openPopup();
+    L.marker([bootleggerLat, bootleggerLng], {
+        icon: bootleggerIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>Bootlegger</h2> 📍 13 Rue Kervégan <br> Bar à cocktails inspiré de l\'époque de la prohibition. Ambiance feutrée et tamisée, parfaite pour savourer des créations originales.');
 
-    L.marker([cocktailexpLat, cocktailexpLng], {icon: cocktailexpIcon}).addTo(map)
-        .bindPopup('<h2>19:33 Cocktail Experience</h2> 📍 6 Rue Santeuil <br> Voyage dans le temps avec une déco style Orient Express. Cocktails du monde entier servis dans une atmosphère élégante et raffinée.')
-        .openPopup();
+    L.marker([cocktailexpLat, cocktailexpLng], {
+        icon: cocktailexpIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>19:33 Cocktail Experience</h2> 📍 6 Rue Santeuil <br> Voyage dans le temps avec une déco style Orient Express. Cocktails du monde entier servis dans une atmosphère élégante et raffinée.');
 
-    L.marker([lieuuniqueLat, lieuuniqueLng], {icon: lieuuniqueIcon}).addTo(map)
-        .bindPopup('<h2>Le Lieu Unique</h2> 📍 2 Rue de la Biscuiterie <br> Ancienne usine LU transformée en centre culturel. Bar-restaurant avec une programmation artistique éclectique et une ambiance arty.')
-        .openPopup();
+    L.marker([lieuuniqueLat, lieuuniqueLng], {
+        icon: lieuuniqueIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>Le Lieu Unique</h2> 📍 2 Rue de la Biscuiterie <br> Ancienne usine LU transformée en centre culturel. Bar-restaurant avec une programmation artistique éclectique et une ambiance arty.');
 
-    L.marker([zenithLat, zenithLng], {icon: zenithIcon}).addTo(map)
-        .bindPopup('<h2>Zénith Nantes Métropole</h2> 📍 Boulevard du Zénith, Saint-Herblain <br> Grande salle accueillant des concerts de tous genres : pop, rock, hip-hop, variétés. Ambiance spectaculaire pour des événements d\'envergure.')
-        .openPopup();
-    
+    L.marker([zenithLat, zenithLng], {
+        icon: zenithIcon,
+        riseOnHover: true
+    }).addTo(map)
+        .bindPopup('<h2>Zénith Nantes Métropole</h2> 📍 Boulevard du Zénith, Saint-Herblain <br> Grande salle accueillant des concerts de tous genres : pop, rock, hip-hop, variétés. Ambiance spectaculaire pour des événements d\'envergure.');
+
     // Make canvas transparent
     clear();
     
     // Add map event listeners
     map.on('move', updateUserPosition);
     map.on('zoom', updateUserPosition);
-
-    sound2.setLoop(true);
 }
 
 function draw() {
+    // Frame rate control
+    const currentTime = millis();
+    if (currentTime - lastFrameTime < frameInterval) {
+        return;
+    }
+    lastFrameTime = currentTime;
+
     // Clear canvas
     clear();
     
-    // Update user coordinates to follow cursor
-    const newLatLng = map.containerPointToLatLng([mouseX, mouseY]);
-    userLat = newLatLng.lat;
-    userLng = newLatLng.lng;
-    
-    // Check proximity to Macadam and manage sound
-    checkProximityToMacadam();
+    // Only update coordinates if mouse has moved
+    if (mouseX !== pmouseX || mouseY !== pmouseY) {
+        const newLatLng = map.containerPointToLatLng([mouseX, mouseY]);
+        userLat = newLatLng.lat;
+        userLng = newLatLng.lng;
+        
+        // Check proximity to all venues and manage sound
+        checkProximityToVenues();
+    }
     
     // Get screen position of user
     const userPoint = map.latLngToContainerPoint([userLat, userLng]);
@@ -255,11 +312,14 @@ function draw() {
     imageMode(CENTER);
     image(user, userX, userY, userSize, userSize);
     
-    // Update sound playing status
-    updateSoundStatus();
-    
-    // Draw speaker icon
-    drawSpeakerIcon();
+    // Draw speaker icons on active markers
+    venues.forEach(venue => {
+        if (venue.isNear) {
+            const markerPoint = map.latLngToContainerPoint([venue.lat, venue.lng]);
+            imageMode(CENTER);
+            image(speakerLoudIcon, markerPoint.x, markerPoint.y - 40, 20, 20);
+        }
+    });
     
     // Hide cursor
     noCursor();
@@ -283,38 +343,91 @@ function calculateVolumeFromDistance(distance) {
     }
 }
 
-function checkProximityToMacadam() {
-    // Calculate distance to Macadam (in meters)
-    const distance = getDistanceFromLatLonInM(userLat, userLng, macadamLat, macadamLng);
+// Optimize proximity checking
+function checkProximityToVenues() {
+    // Find the closest venue
+    let closestVenue = null;
+    let closestDistance = Infinity;
     
-    // Calculate volume based on distance
-    const volume = calculateVolumeFromDistance(distance);
-    
-    // Check if user is within proximity threshold of Macadam
-    if (distance < proximityThreshold) {
-        // If just entered proximity zone or already in zone
-        if (!isNearMacadam) {
-            console.log(`Near Macadam! Distance: ${distance.toFixed(0)}m, Volume: ${volume.toFixed(2)}`);
+    // Calculate distances to all venues
+    for (let i = 0; i < venues.length; i++) {
+        const venue = venues[i];
+        const distance = getDistanceFromLatLonInM(userLat, userLng, venue.lat, venue.lng);
+        
+        // Only store distance if it's within threshold
+        if (distance < proximityThreshold) {
+            venue.distance = distance;
             
-            if (!sound2.isPlaying()) {
-                sound2.play();
+            // Check if this is the closest venue
+            if (distance < closestDistance) {
+                closestVenue = venue;
+                closestDistance = distance;
             }
-            isNearMacadam = true;
+        } else {
+            // Clear distance if outside threshold
+            venue.distance = null;
+        }
+    }
+    
+    // Handle the closest venue (if any)
+    if (closestVenue) {
+        // Calculate volume based on distance
+        const volume = calculateVolumeFromDistance(closestDistance);
+        
+        // If we just entered this venue's proximity
+        if (!closestVenue.isNear) {
+            console.log(`Near ${closestVenue.name}! Distance: ${closestDistance.toFixed(0)}m, Volume: ${volume.toFixed(2)}`);
+            
+            // Stop sounds from other venues
+            for (let i = 0; i < venues.length; i++) {
+                const v = venues[i];
+                if (v !== closestVenue && v.isNear) {
+                    v.isNear = false;
+                    if (v.sound && v.sound.isPlaying()) {
+                        v.sound.pause();
+                    }
+                }
+            }
+            
+            // Start playing if not already
+            if (closestVenue.sound && !closestVenue.sound.isPlaying()) {
+                closestVenue.sound.play();
+            }
+            
+            closestVenue.isNear = true;
         }
         
         // Update volume dynamically based on distance
-        sound2.amp(volume);
+        if (closestVenue.sound) {
+            closestVenue.sound.amp(volume);
+        }
         
         // Optional: log volume changes at certain intervals for debugging
         if (frameCount % 60 === 0) { // Log once per second (assuming 60fps)
-            console.log(`Distance: ${distance.toFixed(0)}m, Volume: ${volume.toFixed(2)}`);
+            console.log(`Near ${closestVenue.name}: Distance: ${closestDistance.toFixed(0)}m, Volume: ${volume.toFixed(2)}`);
         }
-    } else if (isNearMacadam) {
-        // If just left proximity zone
-        console.log("Left Macadam proximity zone");
-        isNearMacadam = false;
-        sound2.pause();
+    } else {
+        // If not near any venue, stop all sounds
+        let wasNearAny = false;
+        
+        for (let i = 0; i < venues.length; i++) {
+            const venue = venues[i];
+            if (venue.isNear) {
+                wasNearAny = true;
+                venue.isNear = false;
+                if (venue.sound && venue.sound.isPlaying()) {
+                    venue.sound.pause();
+                }
+            }
+        }
+        
+        if (wasNearAny) {
+            console.log("Left all venue proximity zones");
+        }
     }
+    
+    // Update sound playing status
+    isSoundPlaying = venues.some(venue => venue.sound && venue.sound.isPlaying());
 }
 
 // Update the sound playing status
@@ -322,33 +435,15 @@ function updateSoundStatus() {
     isSoundPlaying = sound2.isPlaying();
 }
 
-// Draw the appropriate speaker icon based on sound status
-function drawSpeakerIcon() {
-    imageMode(CORNER);
-    const rightCornerX = windowWidth - speakerIconSize - speakerIconMargin;
-    
-    if (isSoundPlaying) {
-        image(speakerLoudIcon, rightCornerX, speakerIconMargin, speakerIconSize, speakerIconSize);
-    } else {
-        image(speakerQuietIcon, rightCornerX, speakerIconMargin, speakerIconSize, speakerIconSize);
-    }
-}
-
-// Calculate distance between two points in meters
+// Optimize distance calculation
 function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
     const R = 6371000; // Earth radius in meters
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1); 
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    return R * c;
-}
-
-function deg2rad(deg) {
-    return deg * (Math.PI/180);
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
 function windowResized() {
