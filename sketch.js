@@ -86,7 +86,7 @@ const frameInterval = 1000 / targetFrameRate;
 function preload() {
     // Load all sounds
     venues.forEach(venue => {
-        sounds[venue.name] = loadSound(`assets/marker-sounds/${venue.soundFile}`, 
+        sounds[venue.name] = loadSound(`assets/sounds/${venue.soundFile}`, 
             // Success callback
             () => {
                 console.log(`Sound loaded successfully for ${venue.name}`);
@@ -102,10 +102,10 @@ function preload() {
     });
 
     // Load user icon
-    user = loadImage('assets/Icons/user2.png');
+    user = loadImage('assets/icons/user2.png');
     
     // Load speaker icon
-    speakerLoudIcon = loadImage('assets/Icons/speaker-loud.svg',
+    speakerLoudIcon = loadImage('assets/icons/speaker-loud.svg',
         // Success callback
         () => {
             console.log('Speaker icon loaded successfully');
@@ -129,7 +129,7 @@ function setup() {
     
     // Create Macadam icon
     const macadamIcon = L.icon({
-        iconUrl: 'assets/marker-icons/macadam.png',
+        iconUrl: 'assets/icons/macadam.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -138,7 +138,7 @@ function setup() {
 
     // Create warehouse icon
     const warehouseIcon = L.icon({
-        iconUrl: 'assets/marker-icons/warehouse.png',
+        iconUrl: 'assets/icons/warehouse.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -147,7 +147,7 @@ function setup() {
 
     // Create Le Floride icon
     const leflorideIcon = L.icon({
-        iconUrl: 'assets/marker-icons/le_floride.png',
+        iconUrl: 'assets/icons/le_floride.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -156,7 +156,7 @@ function setup() {
 
     // Create Colors Club icon
     const colorsclubIcon = L.icon({
-        iconUrl: 'assets/marker-icons/color_club.png',
+        iconUrl: 'assets/icons/color_club.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -165,7 +165,7 @@ function setup() {
 
     // Create Stereolux icon
     const stereoluxIcon = L.icon({
-        iconUrl: 'assets/marker-icons/stereolux.png',
+        iconUrl: 'assets/icons/stereolux.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -174,7 +174,7 @@ function setup() {
 
     // Create Elephant Club icon
     const elephantclubIcon = L.icon({
-        iconUrl: 'assets/marker-icons/elephant_club.png',
+        iconUrl: 'assets/icons/elephant_club.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -183,7 +183,7 @@ function setup() {
 
     // Create Bootlegger icon
     const bootleggerIcon = L.icon({
-        iconUrl: 'assets/marker-icons/bootlegger.png',
+        iconUrl: 'assets/icons/bootlegger.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -192,7 +192,7 @@ function setup() {
 
     // Create 19:33 Cocktail Experience icon
     const cocktailexpIcon = L.icon({
-        iconUrl: 'assets/marker-icons/cocktail_xp.png',
+        iconUrl: 'assets/icons/cocktail_xp.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -201,7 +201,7 @@ function setup() {
 
     // Create Le Lieu Unique icon
     const lieuuniqueIcon = L.icon({
-        iconUrl: 'assets/marker-icons/lelieuunique.png',
+        iconUrl: 'assets/icons/lelieuunique.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
@@ -210,7 +210,7 @@ function setup() {
 
     // Create Zénith icon
     const zenithIcon = L.icon({
-        iconUrl: 'assets/marker-icons/zenith.png',
+        iconUrl: 'assets/icons/zenith.png',
         iconSize: [60, 60],
         iconAnchor: [30, 30],
         popupAnchor: [0, -15],
