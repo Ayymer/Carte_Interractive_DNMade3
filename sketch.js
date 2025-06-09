@@ -57,16 +57,16 @@ const zenithLng = -1.6274719630164791;
 
 // Define venues array with all locations
 const venues = [
-    { name: "Macadam", lat: macadamLat, lng: macadamLng, isNear: false, soundFile: 'MACADAM.mp3' },
-    { name: "Warehouse", lat: warehouseLat, lng: warehouseLng, isNear: false, soundFile: 'WAREHOUSE.mp3' },
-    { name: "Le Floride", lat: leflorideLat, lng: leflorideLng, isNear: false, soundFile: 'FLORIDE.mp3' },
-    { name: "Colors Club", lat: colorsclubLat, lng: colorsclubLng, isNear: false, soundFile: 'COLORS.mp3' },
-    { name: "Stereolux", lat: stereoluxLat, lng: stereoluxLng, isNear: false, soundFile: 'STEREOLUX.mp3' },
+    { name: "Macadam", lat: macadamLat, lng: macadamLng, isNear: false, soundFile: 'macadam.mp3' },
+    { name: "Warehouse", lat: warehouseLat, lng: warehouseLng, isNear: false, soundFile: 'warehouse.mp3' },
+    { name: "Le Floride", lat: leflorideLat, lng: leflorideLng, isNear: false, soundFile: 'floride.mp3' },
+    { name: "Colors Club", lat: colorsclubLat, lng: colorsclubLng, isNear: false, soundFile: 'colors.mp3' },
+    { name: "Stereolux", lat: stereoluxLat, lng: stereoluxLng, isNear: false, soundFile: 'stereolux.mp3' },
     { name: "Elephant Club", lat: elephantclubLat, lng: elephantclubLng, isNear: false, soundFile: 'elephant_club.mp3' },
-    { name: "Bootlegger", lat: bootleggerLat, lng: bootleggerLng, isNear: false, soundFile: 'BOOTLEGGER.mp3' },
+    { name: "Bootlegger", lat: bootleggerLat, lng: bootleggerLng, isNear: false, soundFile: 'bootlegger.mp3' },
     { name: "19:33 Cocktail Experience", lat: cocktailexpLat, lng: cocktailexpLng, isNear: false, soundFile: 'cocktail.mp3' },
     { name: "Le Lieu Unique", lat: lieuuniqueLat, lng: lieuuniqueLng, isNear: false, soundFile: 'lelieuunique.mp3' },
-    { name: "Zénith Nantes Métropole", lat: zenithLat, lng: zenithLng, isNear: false, soundFile: 'ZENITH.mp3' }
+    { name: "Zénith Nantes Métropole", lat: zenithLat, lng: zenithLng, isNear: false, soundFile: 'zenith.mp3' }
 ];
 
 // Sound settings
